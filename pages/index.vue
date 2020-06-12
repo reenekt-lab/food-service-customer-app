@@ -1,92 +1,180 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-center
-  >
-    <v-flex
-      xs12
-      sm8
-      md6
-    >
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
+  <v-container>
+    <v-row v-if="pwaInfo.canBeInstalled">
+      <v-col>
+        <div class="d-flex align-center">
           <v-spacer />
+          <div class="caption mr-3">
+            Установите наше приложение
+          </div>
           <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
+            color="orange darken-2"
+            dark
+            rounded
+            small
+            @click="$pwaInstaller.promptInstall()"
           >
-            Continue
+            Установить
           </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-flex>
-  </v-layout>
+        </div>
+      </v-col>
+    </v-row>
+
+    <address-card />
+
+    <!-- TODO make not client only -->
+    <client-only>
+      <v-row>
+        <v-col class="common-categories d-flex justify-center">
+          <v-slide-group
+            v-model="selectedCategoryIndex"
+            class="px-4"
+            :show-arrows="showSlideArrows"
+            center-active
+          >
+            <v-slide-item
+              v-for="(category, index) in commonCategories.data"
+              :key="`common-category-${index}`"
+              v-slot:default="{ active, toggle }"
+            >
+              <common-category
+                :label="category.name"
+                :src="category.main_image"
+                :active="active"
+                @click="toggle"
+              />
+            </v-slide-item>
+          </v-slide-group>
+        </v-col>
+      </v-row>
+    </client-only>
+
+    <v-row>
+      <v-col
+        v-for="(restaurant, index) in restaurants.data"
+        :key="`restaurant-card-${index}`"
+        :cols="12"
+        :sm="6"
+        :md="4"
+        :lg="4"
+      >
+        <v-card
+          v-ripple
+          class="mx-auto"
+          height="100%"
+          hover
+          nuxt
+          :to="{ name: 'restaurant-id', params: { id: restaurant.id } }"
+        >
+          <v-img
+            :src="restaurant.main_image"
+            height="200px"
+          />
+
+          <v-card-title>
+            <v-row>
+              <v-col :cols="6">
+                <span class="break-word">{{ restaurant.name }}</span>
+              </v-col>
+              <v-col :cols="6" class="text-right">
+                <span class="break-word">{{ restaurant.cooking_time }}</span>
+              </v-col>
+            </v-row>
+          </v-card-title>
+
+          <v-card-subtitle>
+            <v-chip
+              v-for="(category, category_index) in restaurant.categories"
+              :key="`restaurant-${index}-category-${category_index}`"
+              outlined
+              class="text-default"
+            >
+              {{ category.name }}
+            </v-chip>
+          </v-card-subtitle>
+        </v-card>
+      </v-col>
+
+      <v-col
+        v-if="!restaurants.data.length"
+        cols="12"
+      >
+        <div class="headline text-center">
+          Нет данных
+        </div>
+      </v-col>
+    </v-row>
+
+    <v-fade-transition>
+      <v-overlay
+        v-show="loading"
+        opacity="0.3"
+      >
+        <v-progress-circular indeterminate size="64" />
+      </v-overlay>
+    </v-fade-transition>
+  </v-container>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
+import AddressCard from '../components/address/AddressCard'
+import CommonCategory from '../components/categories/common/CommonCategory'
+import pwaMixin from '../mixins/pwaMixin'
 
 export default {
   components: {
-    Logo,
-    VuetifyLogo
+    AddressCard,
+    CommonCategory
+  },
+  mixins: [pwaMixin],
+  async asyncData ({ $axios }) {
+    const commonCategories = await $axios.$get('/common-category')
+    const restaurants = await $axios.$get('/restaurants')
+    return {
+      commonCategories,
+      restaurants
+    }
+  },
+  data () {
+    return {
+      selectedCategoryIndex: null,
+      loading: false
+    }
+  },
+  computed: {
+    selectedCategory () {
+      if (this.selectedCategoryIndex === null || this.selectedCategoryIndex === undefined) {
+        return null
+      }
+      return this.commonCategories.data[this.selectedCategoryIndex]
+    },
+    showSlideArrows () {
+      return this.$vuetify.breakpoint.mdAndUp || false
+    }
+  },
+  watch: {
+    selectedCategory (val, oldVal) {
+      this.loading = true
+      const params = {}
+      if (val) {
+        params.common_category = val.id
+      }
+      this.$axios.$get('/restaurants', {
+        params
+      })
+        .then((responseData) => {
+          this.restaurants = responseData
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    }
   }
 }
 </script>
+
+<style scoped lang="scss">
+.break-word {
+  word-break: break-word;
+}
+</style>

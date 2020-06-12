@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+require('dotenv').config() // load env for true app configuration (axios and other) FIXME https://github.com/nuxt-community/axios-module/issues/171#issuecomment-542261530
 
 export default {
   mode: 'universal',
@@ -20,16 +21,21 @@ export default {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: { color: colors.blue.darken2 },
   /*
   ** Global CSS
   */
   css: [
+    '~/assets/page-transition.css',
+    '~/assets/fonts.css',
+    '@mdi/font/css/materialdesignicons.css'
   ],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '~/plugins/vuex-localstorage.js', ssr: false },
+    { src: '~plugins/pwa-installer', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -37,7 +43,9 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
-    '@nuxtjs/vuetify'
+    '@nuxtjs/vuetify',
+    // Doc: https://github.com/nuxt-community/moment-module
+    '@nuxtjs/moment'
   ],
   /*
   ** Nuxt.js modules
@@ -47,7 +55,10 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    // Doc: https://auth.nuxtjs.org/
+    // '@nuxtjs/auth'
+    '@nuxtjs/auth-next'
   ],
   /*
   ** Axios module configuration
@@ -55,27 +66,65 @@ export default {
   */
   axios: {
   },
+
+  /*
+  ** Auth module configuration
+  ** See https://auth.nuxtjs.org/api/options.html
+  */
+  auth: {
+    redirect: {
+      login: '/'
+    },
+    strategies: {
+      laravelPassportPasswordGrant: {
+        name: 'laravelPassportPassword',
+        provider: 'laravel/passport',
+        url: process.env.AUTH_BASE_URL || 'http://food-service.local',
+        endpoints: {
+          user: {
+            url: process.env.AUTH_USER_ENDPOINT || '/api/auth/user'
+          }
+        },
+        token: {
+          maxAge: 1800
+        },
+        refreshToken: {
+          maxAge: 60 * 60 * 24 * 30
+        },
+        clientId: process.env.AUTH_PASSPORT_CLIENT_ID,
+        clientSecret: process.env.AUTH_PASSPORT_CLIENT_SECRET,
+        grantType: 'password'
+      }
+    }
+  },
+  /*
+  ** PWA module configuration
+  ** See https://pwa.nuxtjs.org/
+  */
+  pwa: {
+    manifest: {
+      name: 'Заказ еды Food Service',
+      short_name: 'Заказ еды',
+      description: 'Заказ еды с доставкой',
+      theme_color: colors.orange.darken1,
+      lang: 'ru'
+    }
+  },
+
   /*
   ** vuetify module configuration
   ** https://github.com/nuxt-community/vuetify-module
   */
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
-    theme: {
-      dark: true,
-      themes: {
-        dark: {
-          primary: colors.blue.darken2,
-          accent: colors.grey.darken3,
-          secondary: colors.amber.darken3,
-          info: colors.teal.lighten1,
-          warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent3
-        }
-      }
-    }
+    defaultAssets: false,
+    optionsPath: './vuetify.options.js'
   },
+
+  moment: {
+    defaultLocale: 'ru',
+    locales: ['ru']
+  },
+
   /*
   ** Build configuration
   */
