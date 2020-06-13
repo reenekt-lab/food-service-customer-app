@@ -95,11 +95,29 @@
                   </template>
                 </v-simple-table>
                 <v-divider class="my-2" />
+                <v-btn
+                  text
+                  small
+                  block
+                  nuxt
+                  :to="{ name: 'restaurant-id', params: { id: newOrder.restaurant.id } }"
+                >
+                  {{ newOrder.restaurant.name }}
+                </v-btn>
+                <div class="d-flex justify-center">
+                  <v-icon small>
+                    mdi-arrow-down
+                  </v-icon>
+                </div>
+                <div class="text-end">
+                  {{ newOrder.address }}
+                </div>
+                <v-divider inset class="my-2" />
                 <v-simple-table dense>
                   <template v-slot:default>
                     <thead>
                       <tr>
-                        <th colspan="2">
+                        <th colspan="3">
                           Содержимое заказа
                         </th>
                       </tr>
@@ -112,6 +130,27 @@
                         <td>{{ getFoodName(contentItem.food_id) }}</td>
                         <td>
                           <small>x</small>{{ contentItem.count }}
+                        </td>
+                        <td class="text-no-wrap">
+                          <span>{{ getFoodCost(contentItem.food_id) * contentItem.count }}</span>
+                          <v-icon
+                            x-small
+                          >
+                            mdi-currency-rub
+                          </v-icon>
+                        </td>
+                      </tr>
+                      <tr class="font-weight-bold">
+                        <td colspan="2">
+                          <span>Итого</span>
+                        </td>
+                        <td class="text-no-wrap">
+                          <span>{{ getOrderContentTotalCost(newOrder.content) }}</span>
+                          <v-icon
+                            x-small
+                          >
+                            mdi-currency-rub
+                          </v-icon>
                         </td>
                       </tr>
                     </tbody>
@@ -356,6 +395,28 @@ export default {
       }
       const food = this.allFood.data.find(food => food.id === +id)
       return food ? food.name : null
+    },
+    getFoodCost (id) {
+      if (isNaN(id)) {
+        return null
+      }
+      const food = this.allFood.data.find(food => food.id === +id)
+      return food ? +food.cost : null
+    },
+    getOrderContentTotalCost (order) {
+      if (!order || !order.length) {
+        return 0
+      }
+
+      let totalCost = 0
+      for (const key in order) {
+        if (Object.prototype.hasOwnProperty.call(order, key)) {
+          const orderItem = order[key]
+          totalCost += +this.getFoodCost(orderItem.food_id) * orderItem.count
+        }
+      }
+
+      return totalCost
     },
     getStatusName (status) {
       const statusMap = {

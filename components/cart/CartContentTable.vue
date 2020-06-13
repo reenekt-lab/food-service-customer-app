@@ -11,7 +11,8 @@
       </tr>
       <tr v-else>
         <th>Название</th>
-        <th>Количество</th>
+        <th></th>
+        <th></th>
         <th v-if="!readOnly" />
       </tr>
     </thead>
@@ -24,7 +25,15 @@
           {{ getFoodName(orderItem.food_id) }}
         </td>
         <td>
-          {{ orderItem.count }}
+          <small>x</small>{{ orderItem.count }}
+        </td>
+        <td class="text-no-wrap">
+          <span>{{ getFoodCost(orderItem.food_id) * orderItem.count }}</span>
+          <v-icon
+            x-small
+          >
+            mdi-currency-rub
+          </v-icon>
         </td>
         <td v-if="!readOnly">
           <v-btn
@@ -34,6 +43,19 @@
           >
             <v-icon>mdi-minus</v-icon>
           </v-btn>
+        </td>
+      </tr>
+      <tr v-if="orderContent.length" class="font-weight-bold">
+        <td colspan="2">
+          <span>Итого</span>
+        </td>
+        <td colspan="2" class="text-no-wrap">
+          <span>{{ orderContentTotalCost }}</span>
+          <v-icon
+            x-small
+          >
+            mdi-currency-rub
+          </v-icon>
         </td>
       </tr>
     </tbody>
@@ -58,6 +80,21 @@ export default {
       default: false
     }
   },
+  computed: {
+    orderContentTotalCost () {
+      if (!this.orderContent || !this.orderContent.length) {
+        return 0
+      }
+
+      let totalCost = 0
+      for (const key in this.orderContent) {
+        const orderItem = this.orderContent[key]
+        totalCost += +this.getFoodCost(orderItem.food_id) * orderItem.count
+      }
+
+      return totalCost
+    }
+  },
   methods: {
     getFoodName (id) {
       if (isNaN(id)) {
@@ -65,6 +102,13 @@ export default {
       }
       const food = this.allFood.data.find(food => food.id === +id)
       return food ? food.name : null
+    },
+    getFoodCost (id) {
+      if (isNaN(id)) {
+        return null
+      }
+      const food = this.allFood.data.find(food => food.id === +id)
+      return food ? +food.cost : null
     },
     removeOrderItem (orderItem) {
       this.$emit('order-content:remove-item', orderItem)

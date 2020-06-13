@@ -8,8 +8,22 @@
         height="200px"
       />
 
-      <v-card-title>{{ food.name }}</v-card-title>
+      <v-card-title>
+        <div>{{ food.name }}</div>
+        <v-spacer />
+        <div>
+          {{ food.cost * count }}
+          <v-icon
+            small
+          >
+            mdi-currency-rub
+          </v-icon>
+        </div>
+      </v-card-title>
       <v-card-text>
+        <div class="text-truncate" style="max-height: 250px;">
+          {{ food.description }}
+        </div>
         <v-text-field
           v-model="count"
           class="add-to-cart__count-field"
