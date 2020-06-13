@@ -139,11 +139,6 @@
             <v-row
               v-for="(foodGroup, foodGroupCategoryId, foodGroupIndex) in groupedFood"
               :key="`food-group-${foodGroupIndex}`"
-              :class="{
-                'order-0': foodGroupIndex < 2,
-                'order-2': foodGroupIndex >= 2
-              }"
-
               v-intersect="{
                 handler: onIntersect,
                 options: {
@@ -151,13 +146,17 @@
                   rootMargin: '-160px 0px -40% 0px'
                 }
               }"
+              :class="{
+                'order-0': foodGroupIndex < 2,
+                'order-2': foodGroupIndex >= 2
+              }"
               :data-category-id="categories.find(value => value.id === +foodGroupCategoryId).id"
               :data-category-index="foodGroupIndex"
             >
               <div
                 :id="`food-category-title-${categories.find(value => value.id === +foodGroupCategoryId).id}`"
 
-                class="display-1 mb-3 mt-2 px-3 food-category-title"
+                class="text-h4 mb-3 mt-2 px-3 food-category-title"
               >
                 {{ categories.find(value => value.id === +foodGroupCategoryId).name }}
               </div>

@@ -22,40 +22,47 @@
 
       <v-card>
         <v-card-title
-          class="display-1"
+          class="text-h4"
         >
-          <v-btn
-            icon
-            nuxt
-            to="/"
-            class="mr-2 order-0"
-          >
-            <v-icon>mdi-arrow-left</v-icon>
-          </v-btn>
+          <div class="d-flex flex-fill">
+            <v-btn
+              icon
+              nuxt
+              to="/"
+              class="mr-2"
+            >
+              <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+            <div
+              class="d-none d-md-flex text-break"
+            >
+              <span>{{ $auth.user.surname }}&nbsp;</span>
+              <span>{{ $auth.user.first_name }}&nbsp;</span>
+              <span>{{ $auth.user.middle_name }}</span>
+            </div>
+            <v-spacer />
+            <v-btn
+              icon
+              color="secondary"
+              @click="editMode = !editMode"
+            >
+              <v-icon v-if="!editMode">
+                mdi-account-edit
+              </v-icon>
+              <v-icon v-else>
+                mdi-account-edit-outline
+              </v-icon>
+            </v-btn>
+          </div>
+        </v-card-title>
+        <v-card-title class="text-h4 pt-0">
           <div
-            class="d-flex text-break order-3 order-md-1"
-            :class="{
-              'flex-column': $vuetify.breakpoint.smAndDown
-            }"
+            class="d-flex flex-column d-md-none text-break"
           >
             <span>{{ $auth.user.surname }}&nbsp;</span>
             <span>{{ $auth.user.first_name }}&nbsp;</span>
             <span>{{ $auth.user.middle_name }}</span>
           </div>
-          <v-spacer class="order-1 order-md-2" />
-          <v-btn
-            icon
-            color="secondary"
-            class="order-2 order-md-3"
-            @click="editMode = !editMode"
-          >
-            <v-icon v-if="!editMode">
-              mdi-account-edit
-            </v-icon>
-            <v-icon v-else>
-              mdi-account-edit-outline
-            </v-icon>
-          </v-btn>
         </v-card-title>
 
         <v-card-text>

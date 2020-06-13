@@ -10,7 +10,7 @@
         <v-row>
           <v-col cols="12" sm="7">
             <!-- Desktop -->
-            <v-card-title class="display-2 d-none d-sm-block break-word">
+            <v-card-title class="text-h3 d-none d-sm-block break-word">
               Быстрая доставка еды
             </v-card-title>
 

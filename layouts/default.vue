@@ -59,11 +59,11 @@
       </v-container>
     </v-app-bar>
 
-    <v-content>
+    <v-main>
       <v-container>
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
 
     <v-navigation-drawer
       v-model="rightDrawer"
@@ -146,8 +146,8 @@
               <v-divider class="my-4" />
               <v-row>
                 <v-col cols="12" md="4" class="footer-links">
-                  <a href="#" class="text--secondary d-block">Для ресторанов</a>
-                  <a href="#" class="text--secondary d-block">Для курьеров</a>
+                  <a :href="linkToRestaurantManagerApp ? linkToRestaurantManagerApp : '#'" class="text--secondary d-block">Для ресторанов</a>
+                  <a :href="linkToCourierApp ? linkToCourierApp : '#'" class="text--secondary d-block">Для курьеров</a>
                 </v-col>
               </v-row>
               <v-divider class="my-5" />
@@ -200,6 +200,8 @@ export default {
       authModalActive: false,
       addressModalActive: false,
       title: process.env.APP_NAME,
+      linkToRestaurantManagerApp: process.env.APP_LINK_TO_RESTAURANT_MANAGER_APP,
+      linkToCourierApp: process.env.APP_LINK_TO_COURIER_APP,
 
       footerAppProp: true // fixme: works wrong when open restaurant page from any other page
     }

@@ -14,7 +14,8 @@
                 <v-spacer />
                 <v-btn
                   icon
-                  color="secondary"
+                  color="grey lighten-2"
+                  light
                   @click="dialog = false"
                 >
                   <v-icon>mdi-close</v-icon>
@@ -29,7 +30,9 @@
         <span>{{ restaurant.name }}</span>
         <v-spacer />
       </v-card-title>
-      <v-card-subtitle>{{ restaurant.address }}</v-card-subtitle>
+      <v-card-subtitle class="pt-3">
+        {{ restaurant.address }}
+      </v-card-subtitle>
       <v-card-text>
         {{ restaurant.description }}
       </v-card-text>
