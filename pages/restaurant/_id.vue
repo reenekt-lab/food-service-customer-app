@@ -43,7 +43,7 @@
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
 
-      <v-toolbar-title>Title</v-toolbar-title>
+      <v-toolbar-title>{{ restaurant.name }}</v-toolbar-title>
 
       <v-spacer />
 
