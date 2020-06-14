@@ -63,7 +63,7 @@
 
       <template v-slot:extension>
         <v-tabs
-          class="categories-tabs"
+          class="categories-tabs tabs-reversed"
           :value="tabsValue"
         >
           <v-tab
@@ -121,6 +121,7 @@
 
             <template v-slot:extension>
               <v-tabs
+                class="tabs-reversed"
                 :value="tabsValue"
                 show-arrows
               >
@@ -584,5 +585,11 @@ export default {
 .floating-card {
   position: sticky;
   top: 80px;
+}
+
+.tabs-reversed::v-deep {
+  .v-slide-group__content, .v-tabs-bar__content {
+    flex-direction: row-reverse;
+  }
 }
 </style>
