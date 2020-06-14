@@ -277,6 +277,15 @@
                 <!-- fixes v-hoer warn when address is not defined -->
                 <div v-else />
               </v-hover>
+              <v-alert
+                v-show="order.content.length > 0"
+                type="warning"
+                icon="mdi-alert-circle"
+                border="left"
+                dense
+              >
+                Оплата заказа производится при получении!
+              </v-alert>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -366,6 +375,15 @@
                       {{ $store.state.address.address }}
                     </div>
                   </div>
+                  <v-alert
+                    v-show="order.content.length > 0"
+                    type="warning"
+                    icon="mdi-alert-circle"
+                    border="left"
+                    dense
+                  >
+                    Оплата заказа производится при получении!
+                  </v-alert>
                 </v-card-text>
                 <v-card-actions>
                   <v-btn

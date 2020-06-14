@@ -102,6 +102,26 @@ export default {
   ** See https://pwa.nuxtjs.org/
   */
   pwa: {
+    workbox: {
+      runtimeCaching: [
+        {
+          // Should be a regex string. Compiles into new RegExp('https://my-cdn.com/.*')
+          urlPattern: process.env.API_URL
+          // Defaults to `networkFirst` if omitted
+          // handler: 'networkFirst',
+          // Defaults to `GET` if omitted
+          // method: 'GET'
+        },
+        {
+          // Should be a regex string. Compiles into new RegExp('https://my-cdn.com/.*')
+          urlPattern: process.env.API_MEDIA_URL,
+          // Defaults to `networkFirst` if omitted
+          handler: 'StaleWhileRevalidate'
+          // Defaults to `GET` if omitted
+          // method: 'GET'
+        }
+      ]
+    },
     manifest: {
       name: 'Заказ еды Food Service',
       short_name: 'Заказ еды',

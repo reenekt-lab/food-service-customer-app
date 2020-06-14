@@ -67,6 +67,7 @@
 
     <v-navigation-drawer
       v-model="rightDrawer"
+      :touchless="rightDrawerDisabled"
       :right="right"
       temporary
       fixed
@@ -197,6 +198,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
+      rightDrawerDisabled: false,
       authModalActive: false,
       addressModalActive: false,
       title: process.env.APP_NAME,
@@ -220,6 +222,10 @@ export default {
     this.$root.$on('require.modal:address', () => {
       this.addressModalActive = true
     })
+
+    if (!this.$auth.loggedIn) {
+      this.rightDrawerDisabled = true
+    }
   },
   methods: {
     userDrawerToggleHandler () {
