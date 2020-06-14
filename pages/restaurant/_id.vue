@@ -135,7 +135,8 @@
             </template>
           </v-toolbar>
 
-          <v-container fluid class="px-0 d-flex flex-column">
+          <!-- todo revert flex-column-reverse -> flex-column AND `'order-0': foodGroupIndex < 2` -->
+          <v-container fluid class="px-0 d-flex flex-column-reverse">
             <v-row
               v-for="(foodGroup, foodGroupCategoryId, foodGroupIndex) in groupedFood"
               :key="`food-group-${foodGroupIndex}`"
@@ -147,8 +148,8 @@
                 }
               }"
               :class="{
-                'order-0': foodGroupIndex < 2,
-                'order-2': foodGroupIndex >= 2
+                'order-0': foodGroupIndex < (Object.keys(groupedFood).length - 3),
+                'order-2': foodGroupIndex >= (Object.keys(groupedFood).length - 3)
               }"
               :data-category-id="categories.find(value => value.id === +foodGroupCategoryId).id"
               :data-category-index="foodGroupIndex"
