@@ -590,6 +590,7 @@ export default {
 .tabs-reversed::v-deep {
   .v-slide-group__content, .v-tabs-bar__content {
     flex-direction: row-reverse;
+    justify-content: flex-end;
   }
 }
 </style>

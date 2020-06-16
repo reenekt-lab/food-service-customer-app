@@ -149,6 +149,8 @@
                 <v-col cols="12" md="4" class="footer-links">
                   <a :href="linkToRestaurantManagerApp ? linkToRestaurantManagerApp : '#'" class="text--secondary d-block">Для ресторанов</a>
                   <a :href="linkToCourierApp ? linkToCourierApp : '#'" class="text--secondary d-block">Для курьеров</a>
+                  <a href="/legal/privacy.pdf" target="_blank" class="text--secondary d-block">Политика обработки персональных данных</a>
+                  <a href="/legal/disclaimer-of-liability.pdf" target="_blank" class="text--secondary d-block">Отказ от ответственности</a>
                 </v-col>
               </v-row>
               <v-divider class="my-5" />

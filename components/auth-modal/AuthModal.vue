@@ -70,6 +70,7 @@
                   prepend-icon="mdi-account"
                   type="text"
                   :error="$v.userData.surname.$anyError || registerResponseErrorKeys.surname"
+                  :error-messages="$v.userData.surname.$dirty && !$v.userData.surname.required ? ['Заполните поле'] : []"
                   @input="() => { $v.userData.surname.$touch(); registerResponseErrorKeys.surname = false }"
                   @blur="() => { $v.userData.surname.$touch(); registerResponseErrorKeys.surname = false }"
                 />
@@ -82,6 +83,7 @@
                   prepend-icon="mdi-account"
                   type="text"
                   :error="$v.userData.first_name.$anyError || registerResponseErrorKeys.first_name"
+                  :error-messages="$v.userData.first_name.$dirty && !$v.userData.first_name.required ? ['Заполните поле'] : []"
                   @input="() => { $v.userData.first_name.$touch(); registerResponseErrorKeys.first_name = false }"
                   @blur="() => { $v.userData.first_name.$touch(); registerResponseErrorKeys.first_name = false }"
                 />
@@ -106,6 +108,7 @@
                   prepend-icon="mdi-phone"
                   type="text"
                   :error="$v.userData.phone_number.$anyError || registerResponseErrorKeys.phone_number"
+                  :error-messages="$v.userData.phone_number.$dirty && !$v.userData.phone_number.required ? ['Заполните поле'] : []"
                   @input="() => { $v.userData.phone_number.$touch(); registerResponseErrorKeys.phone_number = false }"
                   @blur="() => { $v.userData.phone_number.$touch(); registerResponseErrorKeys.phone_number = false }"
                 />
@@ -118,6 +121,7 @@
                   prepend-icon="mdi-at"
                   type="text"
                   :error="$v.userData.email.$anyError || registerResponseErrorKeys.email"
+                  :error-messages="$v.userData.email.$dirty && !$v.userData.email.required ? ['Заполните поле'] : []"
                   @input="() => { $v.userData.email.$touch(); registerResponseErrorKeys.email = false }"
                   @blur="() => { $v.userData.email.$touch(); registerResponseErrorKeys.email = false }"
                 />
@@ -132,6 +136,19 @@
                   type="password"
                   autocomplete="new-password"
                   :error="$v.userData.password.$anyError || registerResponseErrorKeys.password"
+                  :error-messages="(() => {
+                    if (!$v.userData.password.$dirty) {
+                      return []
+                    }
+                    let messages = []
+                    if (!$v.userData.password.required) {
+                      messages.push('Заполните поле')
+                    }
+                    if (!$v.userData.password.minLength) {
+                      messages.push('Пароль должен быть длиной не менее 8 символов')
+                    }
+                    return messages
+                  })()"
                   @input="() => { $v.userData.password.$touch(); registerResponseErrorKeys.password = false }"
                   @blur="() => { $v.userData.password.$touch(); registerResponseErrorKeys.password = false }"
                 />
@@ -145,17 +162,62 @@
                   type="password"
                   autocomplete="new-password"
                   :error="$v.userData.password_confirmation.$anyError || registerResponseErrorKeys.password_confirmation"
+                  :error-messages="(() => {
+                    if (!$v.userData.password_confirmation.$dirty) {
+                      return []
+                    }
+                    let messages = []
+                    if (!$v.userData.password_confirmation.sameAsPassword) {
+                      messages.push('Пароли должны совпадать')
+                    }
+                    return messages
+                  })()"
                   @input="() => { $v.userData.password_confirmation.$touch(); registerResponseErrorKeys.password_confirmation = false }"
                   @blur="() => { $v.userData.password_confirmation.$touch(); registerResponseErrorKeys.password_confirmation = false }"
                 />
+                <v-checkbox
+                  v-model="privacyAccept"
+                  hide-details
+                >
+                  <template #label>
+                    <div>
+                      Я согласен на
+                      <a
+                        target="_blank"
+                        href="/legal/privacy.pdf"
+                        @click.stop
+                      >
+                        обработку моих персональных данных
+                      </a>
+                    </div>
+                  </template>
+                </v-checkbox>
+                <v-checkbox
+                  v-model="disclaimerOfLiabilityAccept"
+                  hide-details
+                >
+                  <template #label>
+                    <div>
+                      Я ознакомлен с
+                      <a
+                        target="_blank"
+                        href="/legal/disclaimer-of-liability.pdf"
+                        @click.stop
+                      >
+                        отказом от ответственности
+                      </a>
+                    </div>
+                  </template>
+                </v-checkbox>
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
               <v-btn
-                dark
+                :dark="privacyAccept && disclaimerOfLiabilityAccept"
                 color="orange darken-2"
                 :loading="loading"
+                :disabled="!privacyAccept || !disclaimerOfLiabilityAccept"
                 @click="registerUser"
               >
                 Зарегистрироваться
@@ -197,6 +259,8 @@ export default {
         password: '',
         password_confirmation: ''
       },
+      privacyAccept: false,
+      disclaimerOfLiabilityAccept: false,
       loading: false,
       loginError: false,
       registerResponseErrorKeys: {
@@ -228,9 +292,7 @@ export default {
       first_name: {
         required
       },
-      middle_name: {
-        required
-      },
+      middle_name: {},
       phone_number: {
         required
       },
